@@ -1,11 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WonParent</title>
+    <style>
+        /* This makes sure the image takes up the full screen and stays centered */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Makes the body take up the full viewport height */
+            margin: 0;
+            background-color: #f0f0f0; /* Optional: Sets a light background */
+        }
+
+        img {
+            max-width: 100%; /* Makes sure the image is responsive */
+            max-height: 100vh; /* Ensures it fits within the screen height */
+            object-fit: contain; /* Ensures the entire image is visible */
+        }
+    </style>
 </head>
 <body>
 
-    <img src="./Images/home.png">
+    <img src="./Images/home.png" alt="Home Image">
     
 </body>
 </html>
