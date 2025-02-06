@@ -1,1 +1,152 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WonParent</title>
+
+    <!-- Import Firebase Modules (Latest v10) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get, child, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // 🔥 Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9r_KJu5bZnhFGpiXn-hcnRHu67A4jo9o",
+            authDomain: "wonparent.firebaseapp.com",
+            databaseURL: "https://wonparent-default-rtdb.firebaseio.com",
+            projectId: "wonparent",
+            storageBucket: "wonparent.firebasestorage.app",
+            messagingSenderId: "739958206050",
+            appId: "1:739958206050:web:486b3df876dc75ea282b3b",
+            measurementId: "G-S7S1KJMPDR"
+        };
+
+        // 🔥 Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const options = ["Sports Engine", "Team Link", "Seesaw", "Meet Mobile", "USTA", "Instateam"];
+
+        // Fetch votes from Firebase
+        function fetchVotes() {
+            get(ref(db, "votes"))
+                .then(snapshot => {
+                    if (snapshot.exists()) {
+                        renderVotes(snapshot.val());
+                    } else {
+                        console.log("No votes yet");
+                        renderVotes({});
+                    }
+                })
+                .catch(error => console.error("Error fetching votes:", error));
+        }
+
+        // Render the voting options and counts
+        function renderVotes(votes) {
+            const container = document.getElementById("voteContainer");
+            container.innerHTML = "";
+
+            options.forEach(option => {
+                const div = document.createElement("div");
+                div.className = "vote-card";
+                div.innerHTML = `
+                    <h3>${option}</h3>
+                    <p>Votes: <span id="count-${option}">${votes[option] || 0}</span></p>
+                    <button onclick="vote('${option}')">Vote</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Handle voting action
+        window.vote = function(option) {
+            const voteRef = ref(db, `votes/${option}`);
+
+            get(voteRef).then(snapshot => {
+                const currentVotes = snapshot.exists() ? snapshot.val() : 0;
+                update(ref(db, "votes"), { [option]: currentVotes + 1 })
+                    .then(() => fetchVotes())
+                    .catch(error => console.error("Error updating vote:", error));
+            });
+        };
+
+        fetchVotes();
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Playfair Display', serif;
+            background-color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90%;
+        }
+
+        .vote-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .vote-card {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            width: 130px;
+            font-size: 0.9em;
+        }
+
+        h3 {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        button {
+            padding: 8px;
+            border: none;
+            background-color: #E07A5F;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #2A5D9F;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Which sites/apps do you use the most?</h2>
+        <div class="vote-container" id="voteContainer"></div>
+        <p class="suggestion-link"><a href="mailto:jeffbrattin@wonparent.com?subject=New Link Request&body=Please add a new App or webpage:">Email us your suggestions</a></p>
+    </div>
+
+</body>
+</html>
